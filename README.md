@@ -1,16 +1,8 @@
 # network_connectivity_riverpod
 
-A new Flutter project.
+A Flutter Application which displays a Connectivity status of the Device with help of Riverpod 2.0. 
+The app listens to the changes in the Connectivity and show the status on the HomeScreen and and also show a Snackbar. 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Just Clone the Project and you can check the Code.

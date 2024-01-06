@@ -3,40 +3,57 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum ConnectivityStatus { NotDetermined, isConnected, isDisonnected }
+enum ConnectivityStatus {
+  uknown,
+  connected,
+  disconnected;
+
+  String msg() {
+    switch (this) {
+      case ConnectivityStatus.uknown:
+        return "Conectivity status: <uknown>\n[${DateTime.now()}]";
+      case ConnectivityStatus.connected:
+        return "Conectivity status: <connected>\n[${DateTime.now()}]";
+      case ConnectivityStatus.disconnected:
+        return "Conectivity status: <disconnected>\n[${DateTime.now()}]";
+    }
+  }
+}
+
+extension ConnectivityResultX on ConnectivityResult {
+  ConnectivityStatus get connectivityStatus {
+    switch (this) {
+      case ConnectivityResult.none:
+        return ConnectivityStatus.disconnected;
+      default:
+        return ConnectivityStatus.connected;
+    }
+  }
+}
 
 class ConnectivityStatusNotifier extends StateNotifier<ConnectivityStatus> {
-  StreamController<ConnectivityResult> controller =
-      StreamController<ConnectivityResult>();
+  ConnectivityStatusNotifier() : super(ConnectivityStatus.uknown) {
+    init();
+  }
 
-  ConnectivityStatus? lastResult;
-  ConnectivityStatus? newState;
+  Future<void> init() async {
+    final Connectivity connectivity = Connectivity();
+    await checkInitialConnection(connectivity);
+    subscribeToTheConnectionChange(connectivity);
+  }
 
-  ConnectivityStatusNotifier() : super(ConnectivityStatus.isConnected) {
-    if (state == ConnectivityStatus.isConnected) {
-      lastResult = ConnectivityStatus.isConnected;
-    } else {
-      lastResult = ConnectivityStatus.isDisonnected;
-    }
-    lastResult = ConnectivityStatus.NotDetermined;
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      switch (result) {
-        case ConnectivityResult.mobile:
-        case ConnectivityResult.wifi:
-          newState = ConnectivityStatus.isConnected;
-          break;
-        case ConnectivityResult.none:
-          newState = ConnectivityStatus.isDisonnected;
-          break;
-      }
-      if (newState != lastResult) {
-        state = newState!;
-        lastResult = newState;
-      }
+  Future<void> checkInitialConnection(Connectivity connectivity) async {
+    var current = await connectivity.checkConnectivity();
+    state = current.connectivityStatus;
+  }
+
+  void subscribeToTheConnectionChange(Connectivity connectivity) {
+    connectivity.onConnectivityChanged.listen((result) {
+      state = result.connectivityStatus;
     });
   }
 }
 
-final connectivityStatusProviders = StateNotifierProvider((ref) {
+final connectivityStatusProvider = StateNotifierProvider((ref) {
   return ConnectivityStatusNotifier();
 });

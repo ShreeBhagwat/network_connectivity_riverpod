@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_connectivity_riverpod/home_screen.dart';
 
 void main() {
-  runApp(ProviderScope(child: NetworkConnectivity()));
+  runApp(const ProviderScope(child: NetworkConnectivity()));
 }
 
 class NetworkConnectivity extends StatelessWidget {
